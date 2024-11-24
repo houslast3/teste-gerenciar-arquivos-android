@@ -2,28 +2,53 @@ workflows:
   android-workflow:
     name: Android Build
     max_build_duration: 60
+    instance_type: mac_mini_m1
     environment:
-      node: 16.x
+      vars:
+        JAVA_HOME: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home
+      node: latest
+      xcode: latest
       java: 11
+      groups:
+        - keystore_credentials
+      
+    cache:
+      cache_paths:
+        - $HOME/.gradle/caches
+        - $HOME/.gradle/wrapper
+        
+    triggering:
+      events:
+        - push
+        - tag
+        - pull_request
+      branch_patterns:
+        - pattern: '*'
+          include: true
+          source: true
+
     scripts:
       - name: Install dependencies
         script: |
-          npm install --legacy-peer-deps
           npm install -g @ionic/cli
+          npm install --legacy-peer-deps
           
       - name: Build web app
         script: |
-          npm run build
+          ionic build --prod
           
-      - name: Set up Capacitor
+      - name: Add Android platform
         script: |
-          npm install @capacitor/cli @capacitor/core
-          npx cap add android
-          npx cap sync
+          ionic cap add android
           
-      - name: Build Android
+      - name: Update Android platform
+        script: |
+          ionic cap sync android
+          
+      - name: Build Android release
         script: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleRelease
           
     artifacts:
