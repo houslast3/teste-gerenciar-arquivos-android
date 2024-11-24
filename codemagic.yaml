@@ -1,16 +1,17 @@
 workflows:
   android-workflow:
     name: Android Build
-    max_build_duration: 60
+    max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
-      vars:
-        JAVA_HOME: /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home
+      android_signing:
+        - keystore_reference
       node: latest
-      xcode: latest
-      java: 11
+      java: 11.0
       groups:
-        - keystore_credentials
+        - google_play
+      vars:
+        PACKAGE_NAME: "com.filemanager.app"
       
     cache:
       cache_paths:
@@ -37,15 +38,12 @@ workflows:
         script: |
           ionic build --prod
           
-      - name: Add Android platform
+      - name: Set up Android
         script: |
           ionic cap add android
-          
-      - name: Update Android platform
-        script: |
           ionic cap sync android
           
-      - name: Build Android release
+      - name: Build Android
         script: |
           cd android
           chmod +x gradlew
