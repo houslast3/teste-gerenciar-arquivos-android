@@ -1,0 +1,18 @@
+{
+  "appId": "com.filemanager.app",
+  "appName": "File Manager",
+  "webDir": "build",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "Filesystem": {
+      "androidPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.MANAGE_EXTERNAL_STORAGE"
+      ]
+    }
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

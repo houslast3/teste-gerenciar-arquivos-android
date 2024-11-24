@@ -1,7 +1,7 @@
 import React from 'react';
 import { IonApp, IonContent, IonHeader, IonTitle, IonToolbar, IonMenu, IonList, IonItem, IonIcon, IonLabel, IonRouterOutlet, IonSplitPane } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { folderOpen, apps, sdCard } from 'ionicons/icons';
 
 /* Core CSS required for Ionic components to work properly */
@@ -10,9 +10,16 @@ import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
 
+/* Theme variables */
+import '@ionic/react/css/padding.css';
+import '@ionic/react/css/float-elements.css';
+import '@ionic/react/css/text-alignment.css';
+import '@ionic/react/css/text-transformation.css';
+import '@ionic/react/css/flex-utils.css';
+import '@ionic/react/css/display.css';
+
 import FileList from './components/FileList';
 import AppList from './components/AppList';
-import StorageStats from './components/StorageStats';
 
 function App() {
   return (
@@ -44,13 +51,15 @@ function App() {
           </IonMenu>
 
           <IonRouterOutlet id="main">
-            <Route exact path="/apps" component={AppList} />
-            <Route exact path="/files" component={FileList} />
-            <Route exact path="/files/:path" component={FileList} />
-            <Route exact path="/sdcard" component={FileList} />
-            <Route exact path="/">
-              <Redirect to="/files" />
-            </Route>
+            <Switch>
+              <Route path="/apps" component={AppList} exact />
+              <Route path="/files" component={FileList} exact />
+              <Route path="/files/:path" component={FileList} />
+              <Route path="/sdcard" render={(props) => <FileList {...props} isSDCard={true} />} exact />
+              <Route exact path="/">
+                <Redirect to="/files" />
+              </Route>
+            </Switch>
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
